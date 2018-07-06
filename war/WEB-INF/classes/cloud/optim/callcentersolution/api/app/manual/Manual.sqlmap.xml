@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All Rights Reserved
+ * システム名：
+ * ファイル名：Manual.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.manual.ManualMapper">
+
+	<!--
+		Manual エンティティのカラムマッピング
+	-->
+	<resultMap id="entityMap" type="cloud.optim.callcentersolution.api.entity.Manual" >
+		<id property="manualId" column="MANUAL_ID" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="knowledgeId" column="KNOWLEDGE_ID" />
+		<result property="manualName" column="MANUAL_NAME" />
+		<result property="manualPage" column="MANUAL_PAGE" />
+		<result property="manualUrl" column="MANUAL_URL" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+	</resultMap>
+
+	<!--
+		検索
+	-->
+	<select id="findByKnowledgeId" resultMap="entityMap">
+		SELECT
+			manual.*
+		FROM
+			TBL_T_MANUAL manual
+		WHERE
+			manual.COMPANY_ID = #{companyId} AND
+			manual.KNOWLEDGE_ID = #{knowledgeId}
+		ORDER BY
+			manual.MANUAL_ID ASC
+	</select>
+
+	<!--
+		ナレッジと企業IDに紐付かないマニュアルを削除
+	-->
+	<delete id="deleteManuals">
+		DELETE
+		FROM
+			TBL_T_MANUAL manual
+		WHERE
+			manual.COMPANY_ID = #{companyId} AND
+   			manual.KNOWLEDGE_ID = #{knowledgeId}
+	</delete>
+
+	<!--
+		企業IDに紐づくマニュアルを削除
+	-->
+	<delete id="deleteAll">
+		DELETE FROM TBL_T_MANUAL WHERE COMPANY_ID = #{companyId}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

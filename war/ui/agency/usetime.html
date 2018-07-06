@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Analyze Manager">
+<meta name="author" content="Optim">
+<link rel="shortcut icon" href="../img/favicon.png">
+<title>Call Center App</title>
+
+<!-- Main styles for this application -->
+<link href="../css/style.css" rel="stylesheet">
+<link href="../app/ccs.css" rel="stylesheet">
+
+</head>
+
+<body class="app pace-done sidebar-minimized invisible">
+	<!-- dev:invisible 追加 -->
+
+	<!-- modal-panel -->
+	<div id="dialog" class="modal align-middle fade bd-example-modal-lg"
+		tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+		aria-hidden="true"></div>
+	<!-- /modal-panel -->
+
+	<!-- header -->
+	<header id="navBar" class="app-header navbar d-flex justify-content-end ccs-navbar"></header>
+	<!-- /header -->
+
+	<!-- app-body -->
+	<div class="app-body">
+
+		<!-- left-side -->
+		<div id="sidebar" class="sidebar"></div>
+		<!-- /left-side -->
+
+		<!-- main -->
+		<main class="main"> <!-- container -->
+		<div class="container-fluid animated fadeIn">
+
+			<div class="card-header d-flex justify-content-start h1-header">
+				<div class="h4 text-muted text-right mr-1 mb-0">
+					<i class="fa fa-clock-o" aria-hidden="true"></i>
+				</div>
+				<div class="p-2">利用時間確認</div>
+			</div>
+
+			<!-- container-lower -->
+			<div class="container-lower">
+				<div class="row">
+					<!-- list -->
+					<div class="col-lg-6">
+						<div class="card h-100a" >
+							<div class="card-header">利用時間リスト（月ごと）</div>
+
+							<div class="modal-footer">
+								<label id="searchMsg" class="bg-warning"></label>
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<select name="year" id="id_year">
+											</select><label>年</label>&nbsp;&nbsp; <select name="month" id="id_month">
+											</select><label>月</label>&nbsp;&nbsp;&nbsp;&nbsp; <span class="input-group-btn"><button
+													id="search_by_month" class="btn btn-secondary"
+													type="button">検索</button> </span>
+										</div>
+									</div>
+								</form>
+							</div>
+
+							<div id="table-scroll" class="table-scroll">
+								<div id="t1" class="scroll-wrap"></div>
+								<div class="inner-wrap t2">
+									<table id="main-table" class="main-table">
+										<thead>
+											<tr>
+												<th scope="col">企業ID</th>
+												<th scope="col">音声解析時間</th>
+												<th scope="col">要約利用回数</th>
+											</tr>
+										</thead>
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+								<!-- /t2 -->
+							</div>
+							<!-- /t1 -->
+						</div>
+						<!-- /table-scroll -->
+
+					</div>
+					<!-- /list -->
+
+
+					<!-- list2 -->
+					<div class="col-lg-6">
+						<div class="card h-100b" >
+							<div class="card-header">利用時間リスト（企業IDごと）</div>
+
+							<div class="modal-footer">
+								<label id="searchMsg1" class="bg-warning"></label>
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<label>企業ID&nbsp;</label><input type="text" name="companyId" id="company_id" maxlength="32"
+												placeholder="企業IDを入力...">
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span
+												class="input-group-btn"><button
+													id="search_by_companyID" class="btn btn-secondary"
+													type="button">検索</button> </span>
+										</div>
+									</div>
+								</form>
+							</div>
+
+							<div id="table-scroll2" class="table-scroll">
+								<div id="t2" class="scroll-wrap"></div>
+								<div class="inner-wrap t2" style="border: 0px">
+									<table id="main-table2" class="main-table">
+										<tr>
+											<th scope="col">年月</th>
+											<th scope="col">音声解析時間</th>
+											<th scope="col">要約利用回数</th>
+										</tr>
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+								<!-- /inner-wrap t2 -->
+							</div>
+							<!-- /t2 -->
+						</div>
+						<!-- /table-scroll -->
+
+					</div>
+					<!-- /list2 -->
+
+
+				</div>
+			</div>
+			<!-- /container-lower -->
+
+		</div>
+		<!-- /container --> </main>
+		<!-- /main -->
+	</div>
+	<!-- /app-body -->
+
+	<!-- footer-->
+	<footer class="app-footer">
+		<!-- <span class="float-right">© 2017 Optim</span> -->
+	</footer>
+
+	<!-- /footer -->
+	<!-- script -->
+	<!-- Bootstrap and necessary plugins -->
+	<script src="../js/libs/jquery.min.js"></script>
+	<script src="../js/libs/tether.min.js"></script>
+	<script src="../js/libs/bootstrap.min.js"></script>
+	<script src="../js/libs/pace.min.js"></script>
+
+	<!-- GenesisUI main scripts -->
+	<script src="../js/main.js"></script>
+
+	<!-- CallCenterSolution Application -->
+
+	<script src="../app/common/ccs.js"></script>
+	<script src="../app/common/util.js"></script>
+	<script src="../app/common/prop.js"></script>
+
+	<script src="../app/common/view.js"></script>
+	<script src="../app/common/api.js"></script>
+	<script src="../app/common/auth.js"></script>
+	<script src="../app/common/user.js"></script>
+
+	<script src="../app/layout.js"></script>
+	<script src="../app/usetime.js"></script>
+
+	<!-- /script -->
+
+</body>
+
+</html>

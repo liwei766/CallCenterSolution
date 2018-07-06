@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All Rights Reserved
+ * システム名：
+ * ファイル名：CompanyManagement.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.companymanagement.CompanyManagementMapper">
+
+	<!--
+		CompanyManagement エンティティのカラムマッピング
+	-->
+	<resultMap id="entityMap" type="cloud.optim.callcentersolution.api.entity.CompanyManagement" >
+		<id property="companyManagementId" column="COMPANY_MANAGEMENT_ID" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="companyName" column="COMPANY_NAME" />
+		<result property="agencyCompanyId" column="AGENCY_COMPANY_ID" />
+		<result property="recaiusLicenseId" column="RECAIUS_LICENSE_ID" />
+		<result property="recaiusModelId" column="RECAIUS_MODEL_ID" />
+		<result property="energyThreshold" column="ENERGY_THRESHOLD" />
+		<result property="hashedCompanyId" column="HASHED_COMPANY_ID" />
+		<result property="saveVoice" column="SAVE_VOICE" />
+<!-- 使わない！
+		<result property="permitIpAddress" column="PERMIT_IP_ADDRESS" />
+-->
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+	</resultMap>
+
+	<!--
+		CompanyManagementSearchResult のカラムマッピング
+	-->
+	<resultMap id="searchResultMap" type="cloud.optim.callcentersolution.api.app.companymanagement.CompanyManagementSearchResult" >
+		<id property="companyManagementId" column="COMPANY_MANAGEMENT_ID" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="companyName" column="COMPANY_NAME" />
+		<result property="agencyCompanyId" column="AGENCY_COMPANY_ID" />
+		<result property="recaiusLicenseId" column="RECAIUS_LICENSE_ID" />
+		<result property="recaiusModelId" column="RECAIUS_MODEL_ID" />
+		<result property="energyThreshold" column="ENERGY_THRESHOLD" />
+		<result property="hashedCompanyId" column="HASHED_COMPANY_ID" />
+		<result property="saveVoice" column="SAVE_VOICE" />
+<!-- 使わない！
+		<result property="permitIpAddress" column="PERMIT_IP_ADDRESS" />
+-->
+    <result property="updateDate" column="UPDATE_DATE" />
+	</resultMap>
+
+	<!-- SearchResult マッピング  -->
+	<!--
+		複数のテーブルを JOIN して同じカラム名が複数取得されてくるような場合、
+		SELECT 内で最初に登場するものが全てのテーブル（エンティティ）のカラム値として
+		設定されるので注意（createDate、updateDate、createUser のようなケース）
+		※クエリ内でテーブルに別名をつけても解決できません。
+		　（culumn 属性に「tbl.*」「tbl2.*」のように記述しても結果は同じ）
+		これに対処する場合は、SELECT 内でカラムに別名をつける（AS ～）必要があります。
+		その場合、上で定義している ～ResultMap も別名と一致するように修正する必要があります。
+	-->
+	<resultMap id="searchMap" type="cloud.optim.callcentersolution.api.app.companymanagement.SearchResult">
+		<association property="companyManagement" resultMap="searchResultMap" />
+	</resultMap>
+
+	<!--
+		検索
+	-->
+	<select id="search" resultMap="searchMap">
+<!--
+	SELECTの検索結果にPERMIT_IP_ADDRESSは不要
+-->
+		SELECT
+			COMPANY_MANAGEMENT_ID,
+			UPDATE_DATE,COMPANY_ID,COMPANY_NAME,AGENCY_COMPANY_ID,RECAIUS_LICENSE_ID,
+			RECAIUS_MODEL_ID,ENERGY_THRESHOLD,HASHED_COMPANY_ID,
+			SAVE_VOICE,
+			CREATE_DATE,CREATE_USER_ID,CREATE_USER_NAME,UPDATE_USER_ID,UPDATE_USER_NAME
+		FROM
+			TBL_T_COMPANY_MANAGEMENT companyManagement
+		<where>
+
+
+
+			<!-- COMPANY_MANAGEMENT_ID companyManagementId 使わない？
+			<if test = "companyManagement.companyManagementId != null and companyManagement.companyManagementId != ''">
+				<![CDATA[
+				AND COMPANY_MANAGEMENT_ID = #{companyManagement.companyManagementId}
+				]]>
+			</if>
+			-->
+
+<!-- 使わない！
+			<if test = "companyManagement.companyManagementIdFrom != null and companyManagement.companyManagementIdFrom != ''">
+				<![CDATA[
+				AND COMPANY_MANAGEMENT_ID >= #{companyManagement.companyManagementIdFrom}
+				]]>
+			</if>
+			<if test = "companyManagement.companyManagementIdTo != null and companyManagement.companyManagementIdTo != ''">
+				<![CDATA[
+				AND COMPANY_MANAGEMENT_ID <= #{companyManagement.companyManagementIdTo}
+				]]>
+			</if>
+			<if test = "companyManagement.companyManagementIdNull == true">
+				AND COMPANY_MANAGEMENT_ID IS NULL
+			</if>
+-->
+
+			<!-- COMPANY_ID companyId 使わない！
+			<if test = "companyManagement.companyId != null and companyManagement.companyId != ''">
+				<if test = "companyManagement.companyIdOption == null or companyManagement.companyIdOption == ''">
+					AND COMPANY_ID = #{companyManagement.companyId}
+				</if>
+				<if test = "companyManagement.companyIdOption != null and companyManagement.companyIdOption != ''">
+					<if test = "companyManagement.companyIdOption == '0'">
+						AND COMPANY_ID = #{companyManagement.companyId}
+					</if>
+					<if test = "companyManagement.companyIdOption != '0'">
+						AND COMPANY_ID LIKE #{companyManagement.companyIdQuery} ESCAPE '\\'
+					</if>
+				</if>
+			</if>
+			<if test = "companyManagement.companyIdNull == true">
+				AND ( COMPANY_ID IS NULL OR COMPANY_ID = '' )
+			</if>
+-->
+
+			<!-- COMPANY_NAME companyName -->
+			<if test = "companyManagement.companyName != null and companyManagement.companyName != ''">
+				<if test = "companyManagement.companyNameOption == null or companyManagement.companyNameOption == ''">
+					AND COMPANY_NAME = #{companyManagement.companyName}
+				</if>
+				<if test = "companyManagement.companyNameOption != null and companyManagement.companyNameOption != ''">
+					<if test = "companyManagement.companyNameOption == '0'">
+						AND COMPANY_NAME = #{companyManagement.companyName}
+					</if>
+					<if test = "companyManagement.companyNameOption != '0'">
+						AND COMPANY_NAME LIKE #{companyManagement.companyNameQuery} ESCAPE '\\'
+					</if>
+				</if>
+			</if>
+			<!-- この条件は不要
+			<if test = "companyManagement.companyNameNull == true">
+				AND ( COMPANY_NAME IS NULL OR COMPANY_NAME = '' )
+			</if>
+			-->
+
+			<!-- AGENCY_COMPANY_ID agencyCompanyId 使わない！
+			<if test = "companyManagement.agencyCompanyId != null and companyManagement.agencyCompanyId != ''">
+				<if test = "companyManagement.agencyCompanyIdOption == null or companyManagement.agencyCompanyIdOption == ''">
+					AND AGENCY_COMPANY_ID = #{companyManagement.agencyCompanyId}
+				</if>
+				<if test = "companyManagement.agencyCompanyIdOption != null and companyManagement.agencyCompanyIdOption != ''">
+					<if test = "companyManagement.agencyCompanyIdOption == '0'">
+						AND AGENCY_COMPANY_ID = #{companyManagement.agencyCompanyId}
+					</if>
+					<if test = "companyManagement.agencyCompanyIdOption != '0'">
+						AND AGENCY_COMPANY_ID LIKE #{companyManagement.agencyCompanyIdQuery} ESCAPE '\\'
+					</if>
+				</if>
+			</if>
+			<if test = "companyManagement.agencyCompanyIdNull == true">
+				AND ( AGENCY_COMPANY_ID IS NULL OR AGENCY_COMPANY_ID = '' )
+			</if>
+-->
+      <!-- AGENCY_COMPANY_ID ROLE_AGENCY のときだけ使う -->
+      <if test = "companyManagement.agencyCompanyId != null and companyManagement.agencyCompanyId != ''">
+        AND AGENCY_COMPANY_ID = #{companyManagement.agencyCompanyId}
+      </if>
+
+			<!-- RECAIUS_LICENSE_ID recaiusLicenseId 使わない！
+			<if test = "companyManagement.recaiusLicenseIdFrom != null and companyManagement.recaiusLicenseIdFrom != ''">
+				<![CDATA[
+				AND RECAIUS_LICENSE_ID >= #{companyManagement.recaiusLicenseIdFrom}
+				]]>
+			</if>
+			<if test = "companyManagement.recaiusLicenseIdTo != null and companyManagement.recaiusLicenseIdTo != ''">
+				<![CDATA[
+				AND RECAIUS_LICENSE_ID <= #{companyManagement.recaiusLicenseIdTo}
+				]]>
+			</if>
+			<if test = "companyManagement.recaiusLicenseIdNull == true">
+				AND RECAIUS_LICENSE_ID IS NULL
+			</if>
+-->
+
+			<!-- RECAIUS_MODEL_ID recaiusModelId 使わない！
+			<if test = "companyManagement.recaiusModelId != null and companyManagement.recaiusModelId != ''">
+			<trim prefix="AND">
+				<foreach item="item" index="x" collection="companyManagement.recaiusModelId" open="(" separator=" OR " close=")">
+					RECAIUS_MODEL_ID = #{item}
+				</foreach>
+			</trim>
+			</if>
+			<if test = "companyManagement.recaiusModelIdNull == true">
+				AND ( RECAIUS_MODEL_ID IS NULL OR RECAIUS_MODEL_ID = '' )
+			</if>
+-->
+
+  <!-- HASHED_COMPANY_ID hashedCompanyId 使わない！
+      <if test = "companyManagement.hashedCompanyId != null and companyManagement.hashedCompanyId != ''">
+        <if test = "companyManagement.hashedCompanyIdOption == null or companyManagement.hashedCompanyIdOption == ''">
+          AND HASHED_COMPANY_ID = #{companyManagement.hashedCompanyId}
+        </if>
+        <if test = "companyManagement.hashedCompanyIdOption != null and companyManagement.hashedCompanyIdOption != ''">
+          <if test = "companyManagement.hashedCompanyIdOption == '0'">
+            AND HASHED_COMPANY_ID = #{companyManagement.hashedCompanyId}
+          </if>
+          <if test = "companyManagement.hashedCompanyIdOption != '0'">
+            AND HASHED_COMPANY_ID LIKE #{companyManagement.hashedCompanyIdQuery} ESCAPE '\\'
+          </if>
+        </if>
+      </if>
+      <if test = "companyManagement.hashedCompanyIdNull == true">
+        AND ( HASHED_COMPANY_ID IS NULL OR HASHED_COMPANY_ID = '' )
+      </if>
+-->
+
+
+<!-- SAVE_VOICE saveVoice 使わない！
+			<if test = "companyManagement.saveVoice != null">
+			<trim prefix="AND">
+				<foreach item="item" index="x" collection="companyManagement.saveVoice" open="(" separator=" OR " close=")">
+					<if test = "item == true">
+						SAVE_VOICE = true
+					</if>
+					<if test = "item != true">
+						SAVE_VOICE = false
+					</if>
+				</foreach>
+			</trim>
+			</if>
+			<if test = "companyManagement.saveVoiceNull == true">
+				AND SAVE_VOICE IS NULL
+			</if>
+-->
+
+<!-- PERMIT_IP_ADDRESS permitIpAddress 使わない！
+			<if test = "companyManagement.permitIpAddress != null and companyManagement.permitIpAddress != ''">
+				<if test = "companyManagement.permitIpAddressOption == null or companyManagement.permitIpAddressOption == ''">
+					AND PERMIT_IP_ADDRESS = #{companyManagement.permitIpAddress}
+				</if>
+				<if test = "companyManagement.permitIpAddressOption != null and companyManagement.permitIpAddressOption != ''">
+					<if test = "companyManagement.permitIpAddressOption == '0'">
+						AND PERMIT_IP_ADDRESS = #{companyManagement.permitIpAddress}
+					</if>
+					<if test = "companyManagement.permitIpAddressOption != '0'">
+						AND PERMIT_IP_ADDRESS LIKE #{companyManagement.permitIpAddressQuery} ESCAPE '\\'
+					</if>
+				</if>
+			</if>
+			<if test = "companyManagement.permitIpAddressNull == true">
+				AND ( PERMIT_IP_ADDRESS IS NULL OR PERMIT_IP_ADDRESS = '' )
+			</if>
+-->
+
+		</where>
+
+		<trim prefix="ORDER BY">
+		<if test = "sortForm != null and sortForm.sortElement != null">
+			<foreach item="item" index="x" collection="sortForm.sortElement" separator=",">
+				${item.name}
+				<if test = "item.asc == true">
+					ASC
+				</if>
+				<if test = "item.asc != true">
+					DESC
+				</if>
+			</foreach>
+		</if>
+		</trim>
+
+		<if test = "sortForm != null and sortForm.maxResult != null">
+			LIMIT ${sortForm.maxResult + 1}
+			<if test = "sortForm.offset != null">
+				OFFSET ${sortForm.offset}
+			</if>
+		</if>
+	</select>
+</mapper>

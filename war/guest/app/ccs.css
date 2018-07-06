@@ -1,0 +1,68 @@
+@charset "UTF-8";
+
+.inquiry .app-body {
+	margin-top: 0;
+}
+
+.inquiry .chat {
+	margin-top: 1%;
+}
+
+ /* 長い行を改行 */
+.inquiry .chat-history {
+	overflow-wrap: break-word;
+	white-space: normal;
+	max-width: 100%;
+	word-break: break-all;
+}
+
+.inquiry .chat-history span {
+	text-align: left;
+	overflow-wrap: break-word;
+	white-space: normal;
+	max-width: 100%;
+	word-break: break-all;
+}
+
+.inquiry .chat-history .cursor-def {
+	cursor: default;
+}
+
+.inquiry .chat-history a {
+	color: #fff98d;
+	text-decoration: none;
+	background-color: transparent;
+	-webkit-text-decoration-skip: objects;
+}
+
+.inquiry .chat-history a:hover {
+	color: #008fef;
+	text-decoration: underline;
+}
+
+.inquiry .chat-history a:not([href]):not([tabindex]) {
+	color: inherit;
+	text-decoration: none;
+}
+
+.inquiry .chat-history a:not([href]):not([tabindex]):focus,
+.inquiry .chat-history a:not([href]):not([tabindex]):hover {
+	color: inherit;
+	text-decoration: none; 
+}
+
+.inquiry .chat-history a:not([href]):not([tabindex]):focus {
+	outline: 0;
+}
+
+.inquiry .chat .faq-area {
+	padding-top: 0px;
+	padding-left: 70px;
+}
+
+#knowledgeFaqTitleArea li {
+	overflow-wrap: break-word;
+	white-space: normal;
+	max-width: 100%;
+	word-break: break-all;
+}

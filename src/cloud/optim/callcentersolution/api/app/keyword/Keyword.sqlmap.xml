@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All rights reserved.
+ * システム名：
+ * ファイル名：Keyword.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.keyword.KeywordMapper">
+
+	<!--
+		SearchResult のカラムマッピング
+	-->
+	<resultMap id="searchResultMap" type="cloud.optim.callcentersolution.api.app.keyword.SearchResult" >
+		<result property="tagId" column="TAG_ID" />
+		<result property="keyword" column="TAG_NAME" />
+	</resultMap>
+
+	<!--
+		検索
+	-->
+	<select id="search" resultMap="searchResultMap">
+		SELECT
+			t.TAG_ID, t.TAG_NAME, COUNT(*) AS KNOWLEDGE_COUNT
+		FROM
+			tbl_t_tag t INNER JOIN tbl_t_knowledge_tag kt USING (TAG_ID)
+		<where>
+			t.COMPANY_ID = #{companyId}
+			<if test = "nouns != null">
+				AND (
+				<foreach item="noun" collection="nouns" separator=" OR ">
+					t.TAG_NAME LIKE #{noun} ESCAPE '\\'
+				</foreach>
+				)
+			</if>
+		</where>
+		GROUP BY
+			t.TAG_ID, t.TAG_NAME
+		ORDER BY
+			KNOWLEDGE_COUNT DESC
+	</select>
+
+	<!--
+		取得
+	-->
+	<select id="get" resultMap="searchResultMap">
+		SELECT
+			t.TAG_ID, t.TAG_NAME
+		FROM
+			tbl_t_tag t INNER JOIN tbl_t_knowledge_tag kt USING (TAG_ID)
+		<where>
+			t.COMPANY_ID = #{companyId}
+			AND t.TAG_NAME = #{tagName}
+		</where>
+		GROUP BY
+			t.TAG_ID, t.TAG_NAME
+		ORDER BY
+			t.TAG_ID
+	</select>
+</mapper>

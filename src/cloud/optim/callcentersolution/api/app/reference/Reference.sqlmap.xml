@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All Rights Reserved
+ * システム名：
+ * ファイル名：Reference.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.reference.ReferenceMapper">
+
+	<!--
+		Reference エンティティのカラムマッピング
+	-->
+	<resultMap id="entityMap" type="cloud.optim.callcentersolution.api.entity.Reference" >
+		<id property="referenceId" column="REFERENCE_ID" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="knowledgeId" column="KNOWLEDGE_ID" />
+		<result property="referenceUrl" column="REFERENCE_URL" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+	</resultMap>
+
+	<!--
+		検索
+	-->
+	<select id="findByKnowledgeId" resultMap="entityMap">
+		SELECT
+			ref.*
+		FROM
+			TBL_T_REFERENCE ref
+		WHERE
+			ref.COMPANY_ID = #{companyId} AND
+			ref.KNOWLEDGE_ID = #{knowledgeId}
+		ORDER BY
+			ref.REFERENCE_ID ASC
+	</select>
+
+	<!--
+		ナレッジと企業IDに紐付く参照先を削除
+	-->
+	<delete id="deleteReferences">
+		DELETE
+		FROM
+			TBL_T_REFERENCE ref
+		WHERE
+			ref.COMPANY_ID = #{companyId} AND
+   			ref.KNOWLEDGE_ID = #{knowledgeId}
+	</delete>
+
+	<!--
+		企業IDに紐づく参照先を削除
+	-->
+	<delete id="deleteAll">
+		DELETE FROM TBL_T_REFERENCE WHERE COMPANY_ID = #{companyId}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

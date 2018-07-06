@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All Rights Reserved
+ * システム名：
+ * ファイル名：Tag.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.tag.TagMapper">
+
+	<!--
+		Tag エンティティのカラムマッピング
+	-->
+	<resultMap id="entityMap" type="cloud.optim.callcentersolution.api.entity.Tag" >
+		<id property="tagId" column="TAG_ID" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="tagName" column="TAG_NAME" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+	</resultMap>
+
+	<!--
+		検索
+	-->
+	<select id="findByKnowledgeId" resultMap="entityMap">
+		SELECT
+			t.*
+		FROM
+			tbl_t_tag t INNER JOIN tbl_t_knowledge_tag kt USING(TAG_ID)
+		WHERE
+			t.COMPANY_ID = #{companyId} AND
+			kt.KNOWLEDGE_ID = #{knowledgeId}
+		ORDER BY
+			kt.KNOWLEDGE_TAG_ID ASC
+	</select>
+
+	<!--
+		ナレッジに紐付かないタグを削除
+	-->
+	<delete id="deleteUnlinkedTags">
+		DELETE
+			tag
+		FROM
+			TBL_T_TAG tag LEFT JOIN TBL_T_KNOWLEDGE_TAG kt USING(TAG_ID)
+		WHERE
+			tag.COMPANY_ID = #{companyId} AND
+   			kt.KNOWLEDGE_TAG_ID IS NULL
+	</delete>
+
+	<delete id="deleteAll">
+		DELETE FROM TBL_T_TAG WHERE COMPANY_ID = #{companyId}
+	</delete>
+</mapper>

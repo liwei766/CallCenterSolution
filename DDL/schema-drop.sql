@@ -1,0 +1,14 @@
+drop table if exists TBL_T_AGENCY;
+drop table if exists TBL_T_CALL_LOG;
+drop table if exists TBL_T_CALL_LOG_DETAIL;
+drop table if exists TBL_T_CALL_USER;
+drop table if exists TBL_T_CHECKWORD;
+drop table if exists TBL_T_COMPANY_MANAGEMENT;
+drop table if exists TBL_T_KNOWLEDGE;
+drop table if exists TBL_T_KNOWLEDGE_TAG;
+drop table if exists TBL_T_MANUAL;
+drop table if exists TBL_T_RECAIUS_LICENSE;
+drop table if exists TBL_T_REFERENCE;
+drop table if exists TBL_T_TAG;
+drop table if exists TBL_T_USE_TIME;
+drop table if exists TBL_T_VOICE_ENCODE_QUEUE;

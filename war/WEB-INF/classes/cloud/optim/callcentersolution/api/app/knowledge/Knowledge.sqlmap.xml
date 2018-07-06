@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All rights reserved.
+ * システム名：
+ * ファイル名：Knowledge.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.knowledge.KnowledgeMapper">
+
+	<!--
+		Knowledge エンティティのカラムマッピング
+	-->
+	<resultMap id="entityMap" type="cloud.optim.callcentersolution.api.entity.Knowledge" >
+		<id property="knowledgeId" column="KNOWLEDGE_ID" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="knowledgeNo" column="KNOWLEDGE_NO" />
+		<result property="title" column="TITLE" />
+		<result property="content" column="CONTENT" />
+		<result property="script" column="SCRIPT" />
+		<result property="clickCount" column="CLICK_COUNT" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+	</resultMap>
+
+	<!--
+		KnowledgeSearchResult のカラムマッピング
+	-->
+	<resultMap id="searchResultMap" type="cloud.optim.callcentersolution.api.app.knowledge.KnowledgeSearchResult" >
+		<id property="knowledgeId" column="KNOWLEDGE_ID" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="knowledgeNo" column="KNOWLEDGE_NO" />
+		<result property="title" column="TITLE" />
+		<result property="content" column="CONTENT" />
+		<result property="script" column="SCRIPT" />
+		<result property="clickCount" column="CLICK_COUNT" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+	</resultMap>
+
+	<!-- SearchResult マッピング  -->
+	<!--
+		複数のテーブルを JOIN して同じカラム名が複数取得されてくるような場合、
+		SELECT 内で最初に登場するものが全てのテーブル（エンティティ）のカラム値として
+		設定されるので注意（createDate、updateDate、createUser のようなケース）
+		※クエリ内でテーブルに別名をつけても解決できません。
+		　（culumn 属性に「tbl.*」「tbl2.*」のように記述しても結果は同じ）
+		これに対処する場合は、SELECT 内でカラムに別名をつける（AS ～）必要があります。
+		その場合、上で定義している ～ResultMap も別名と一致するように修正する必要があります。
+	-->
+	<resultMap id="searchMap" type="cloud.optim.callcentersolution.api.app.knowledge.SearchResult">
+		<association property="knowledge" resultMap="searchResultMap" />
+	</resultMap>
+
+	<!--
+		検索
+	-->
+	<select id="search" resultMap="searchMap">
+
+		SELECT
+			knowledge.KNOWLEDGE_ID, knowledge.COMPANY_ID, knowledge.KNOWLEDGE_NO,
+			knowledge.TITLE, knowledge.CLICK_COUNT,
+			knowledge.CREATE_DATE, knowledge.CREATE_USER_ID, knowledge.CREATE_USER_NAME,
+			knowledge.UPDATE_DATE, knowledge.UPDATE_USER_ID, knowledge.UPDATE_USER_NAME
+		FROM
+			TBL_T_KNOWLEDGE knowledge
+			<if test="knowledge.tagId != null and knowledge.tagId.size() > 0">
+				INNER JOIN tbl_t_knowledge_tag kt USING (KNOWLEDGE_ID)
+			</if>
+		<where>
+			knowledge.COMPANY_ID = #{knowledge.companyId}
+
+			<!-- TITLE title -->
+			<if test = "knowledge.title != null and knowledge.title != ''">
+				<if test = "knowledge.titleOption == null or knowledge.titleOption == ''">
+					AND TITLE = #{knowledge.title}
+				</if>
+				<if test = "knowledge.titleOption != null and knowledge.titleOption != ''">
+					<if test = 'knowledge.titleOption == "0"'>
+						AND TITLE = #{knowledge.title}
+					</if>
+					<if test = 'knowledge.titleOption != "0"'>
+						AND TITLE LIKE #{knowledge.titleQuery} ESCAPE '\\'
+					</if>
+				</if>
+			</if>
+
+			<!-- TAG_ID tagId -->
+			<if test="knowledge.tagId != null and knowledge.tagId.size() > 0">
+				AND kt.TAG_ID IN
+				<foreach item="each" collection="knowledge.tagId" open="(" close=")" separator=", ">
+					#{each}
+				</foreach>
+			</if>
+		</where>
+
+		<if test="knowledge.tagId != null and knowledge.tagId.size() > 0">
+			GROUP BY
+				knowledge.KNOWLEDGE_ID, knowledge.COMPANY_ID, knowledge.KNOWLEDGE_NO,
+				knowledge.TITLE, knowledge.CLICK_COUNT,
+				knowledge.CREATE_DATE, knowledge.CREATE_USER_ID, knowledge.CREATE_USER_NAME,
+				knowledge.UPDATE_DATE, knowledge.UPDATE_USER_ID, knowledge.UPDATE_USER_NAME
+			HAVING
+				COUNT(*) = #{knowledge.tagIdCount}
+		</if>
+
+		<trim prefix="ORDER BY">
+		<if test = "sortForm != null and sortForm.sortElement != null">
+			<foreach item="item" index="x" collection="sortForm.sortElement" separator=",">
+				${item.name}
+				<if test = "item.asc == true">
+					ASC
+				</if>
+				<if test = "item.asc != true">
+					DESC
+				</if>
+			</foreach>
+		</if>
+		</trim>
+
+		<if test = "sortForm != null and sortForm.maxResult != null">
+			LIMIT ${sortForm.maxResult + 1}
+			<if test = "sortForm.offset != null">
+				OFFSET ${sortForm.offset}
+			</if>
+		</if>
+	</select>
+
+	<select id="getMaxKnowledgeNo" resultType="java.lang.Long">
+		SELECT MAX(KNOWLEDGE_NO) FROM TBL_T_KNOWLEDGE WHERE COMPANY_ID = #{companyId}
+	</select>
+
+
+	<update id="incrementClickCount">
+		UPDATE
+			TBL_T_KNOWLEDGE
+		SET
+			CLICK_COUNT = CLICK_COUNT + 1
+		WHERE
+			COMPANY_ID = #{companyId} AND
+		    KNOWLEDGE_ID = #{knowledgeId}
+	</update>
+
+	<delete id="deleteByCompanyId">
+		DELETE k, kt FROM TBL_T_KNOWLEDGE k INNER JOIN TBL_T_KNOWLEDGE_TAG kt USING (KNOWLEDGE_ID)
+		WHERE k.COMPANY_ID = #{companyId}
+	</delete>
+
+	<!--
+		ナレッジエクスポート用検索 のカラムマッピング
+	-->
+	<resultMap id="exportResult" type="cloud.optim.callcentersolution.api.app.knowledge.KnowledgeExportBean" >
+		<id property="knowledge.knowledgeId" column="KNOWLEDGE_ID"/>
+		<result property="knowledge.title" column="TITLE" />
+		<result property="knowledge.content" column="CONTENT" />
+		<result property="knowledge.script" column="SCRIPT" />
+		<result property="knowledge.clickCount" column="CLICK_COUNT" />
+
+		<!-- 参照先 -->
+		<collection property="references" ofType="cloud.optim.callcentersolution.api.entity.Reference" column="{key1=COMPANY_ID,key2=KNOWLEDGE_ID}" select="getReferences"></collection>
+		<!-- マニュアル -->
+		<collection property="manuals" ofType="cloud.optim.callcentersolution.api.entity.Manual" column="{key1=COMPANY_ID,key2=KNOWLEDGE_ID}" select="getManuals"></collection>
+		<!-- タグ -->
+		<collection property="tags" ofType="cloud.optim.callcentersolution.api.entity.Tag" column="{key1=COMPANY_ID,key2=KNOWLEDGE_ID}" select="getTags"></collection>
+	</resultMap>
+
+	<!-- ナレッジエクスポート用検索 -->
+	<select id="searchForExport" resultMap="exportResult">
+		SELECT
+			k.COMPANY_ID,k.KNOWLEDGE_ID,k.TITLE, k.CONTENT, k.SCRIPT, k.CLICK_COUNT
+		FROM
+			TBL_T_KNOWLEDGE k
+		WHERE
+			k.COMPANY_ID = #{companyId}
+		ORDER BY
+			k.KNOWLEDGE_ID
+	</select>
+
+	<!-- 参照先検索 -->
+	<select id="getReferences" resultType="cloud.optim.callcentersolution.api.entity.Reference">
+		SELECT
+			r.REFERENCE_URL
+		FROM
+			TBL_T_REFERENCE r
+		WHERE
+			r.COMPANY_ID = #{key1}
+		AND r.KNOWLEDGE_ID = #{key2}
+		ORDER BY
+			r.REFERENCE_ID
+	</select>
+
+	<!-- マニュアル検索 -->
+	<select id="getManuals" resultType="cloud.optim.callcentersolution.api.entity.Manual">
+		SELECT
+			m.MANUAL_NAME,m.MANUAL_PAGE,m.MANUAL_URL
+		FROM
+			TBL_T_MANUAL m
+		WHERE
+			m.COMPANY_ID = #{key1}
+		AND m.KNOWLEDGE_ID = #{key2}
+		ORDER BY
+			m.MANUAL_ID
+	</select>
+
+	<!-- タグ検索 -->
+	<select id="getTags" resultType="cloud.optim.callcentersolution.api.entity.Tag">
+		SELECT
+			t.TAG_NAME
+		FROM
+			TBL_T_Tag t
+		INNER JOIN TBL_T_KNOWLEDGE_TAG kt USING (TAG_ID)
+		WHERE
+			t.COMPANY_ID = #{key1}
+		AND kt.KNOWLEDGE_ID = #{key2}
+		ORDER BY
+			t.TAG_ID
+	</select>
+</mapper>

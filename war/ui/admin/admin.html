@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- head -->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Analyze Manager">
+	<meta name="author" content="Optim">
+	<link rel="shortcut icon" href="../img/favicon.png">
+	<title>Call Center App</title>
+
+	<!-- Main styles for this application -->
+	<link href="../css/style.css" rel="stylesheet">
+	<link href="../app/ccs.css" rel="stylesheet">
+
+</head>
+
+  <!-- /head -->
+
+  <body class="app pace-done sidebar-minimized invisible">
+
+    <!-- modal-panel -->
+    <div id="dialog" class="modal align-middle fade bd-example-modal-lg"
+     tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    </div>
+    <!-- /modal-panel -->
+
+      <!-- header -->
+      <header id="navBar" class="app-header navbar d-flex justify-content-end ccs-navbar"></header>
+      <!-- /header -->
+
+        <!-- app-body -->
+        <div class="app-body">
+
+          <!-- left-side -->
+          <div id="sidebar" class="sidebar"></div>
+          <!-- /left-side -->
+
+          <!-- main -->
+          <main class="main">
+
+            <!-- container -->
+            <div class="container-fluid animated fadeIn h-100">
+              <div class="d-flex h-100">
+                <!-- list -->
+                <div class="col-lg-8 no-padding h-100">
+                <div class="card border-left-0 h-100 ccs-admin-left-pane">
+<div class="card-header d-flex justify-content-start h1-header">
+  <div class="h4 text-muted text-right mr-1 mb-0">
+    <i class="fa fa-database" aria-hidden="true"></i>
+  </div>
+  <div class="mr-auto p-2">ナレッジ管理</div>
+
+  <div class="col-lg-4">
+    <div class="input-group">
+      <input type="text" id="inputSearch" class="form-control ccs-with-button" maxlength="100"
+       placeholder="タイトル検索" aria-label="Search for...">
+      <span class="input-group-btn">
+        <button id="search" class="btn btn-primary mb-0" type="button">検索</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="row ccs-admin-warn-area" id="searchMsgParent" hidden="hidden">
+  <div class="col-lg-12 h-100 bg-warning d-flex align-items-center">
+    <label id="searchMsg" class="text-center w-100"></label>
+  </div>
+</div>
+
+  <div id="table-scroll" class="table-scroll ccs-list-table">
+    <div id="t1" class="scroll-wrap"></div>
+    <div class="inner-wrap t2 border-0">
+      <table id="main-table" class="main-table">
+        <thead>
+          <tr>
+            <th>#<button type="button" class="btn-xs btn-link"><i id="sortNo" class="text-white fa fa-sort"></i></button></th>
+            <th class="min-w-120">タイトル<button type="button" class="btn-xs btn-link"><i id="sortTitle" class="text-white fa fa-sort"></i></button></th>
+            <th class="min-w-120">登録者ID<button type="button" class="btn-xs btn-link"><i id="sortId" class="text-white fa fa-sort"></i></button></th>
+            <th class="min-w-120">更新日時<button type="button" class="btn-xs btn-link"><i id="sortTime" class="text-white fa fa-sort"></i></button></th>
+            <th>状態</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div> <!-- /t2 -->
+  <!-- </div> <!-- /t1 -->
+</div> <!-- /table-scroll -->
+
+                </div> <!-- /card -->
+                </div>
+                <!-- /list -->
+                <!-- answer -->
+
+                <div class="col-lg-4 no-padding h-100 ccs-admin-right-pane">
+                <div class="card border-left-0 border-right-0 card-height">
+                  <div class="card-header h2-header">
+<div class="row d-flex h-100 align-items-center">
+  <span class="col-lg-3">詳細情報</span>
+  <span class="col-lg-9 text-right">
+    <strong><label id="dispNo"></label></strong>
+  </span>
+</div>
+                  </div> <!-- /card-header -->
+
+
+  <div id="editParent" class="card-block">
+    <form>
+      <div class="row">
+        <div class="col-lg-12">
+          <!-- Title -->
+          <div class="form-group-modal w-100">
+            <div class="row">
+              <div class="col-lg-12">
+            <span class="badge-small badge-danger text-white">必須</span>
+            <label for="inputTitle">タイトル</label>
+            <input type="text" class="form-control w-100" id="inputTitle" maxlength="100" aria-describedby="emailHelp" placeholder="">
+          </div>
+          </div>
+          </div>
+          <!-- /Title -->
+          <!-- Answer -->
+          <div class="form-group-modal w-100">
+            <div class="row">
+              <div class="col-lg-12">
+            <span class="badge-small badge-danger text-white">必須</span>
+                <label for="inputContent">回答</label>
+                <textarea rows="5" id="inputContent" class="form-control noresize w-100" placeholder=""></textarea>
+	      </div>
+            </div>
+          </div>
+          <!-- /Answer -->
+          <!-- URL -->
+          <div>
+          	<div>
+	            <table class="col-lg-12">
+					<tr>
+						<td align="left" class="h6 col-form-label-sm"><label for="inputUrl">参照URL</label></td>
+						<td align="right" class="h5 text-muted text-right mr-1 mb-0">
+							<a id = "addRefUrl">
+								<i class="fa fa-plus-circle " aria-hidden="true"></i>
+							</a>
+						</td>
+					<tr>
+			    </table>
+			</div>
+            <div id="refUrlList" class="row">
+				<div class="col-lg-12">
+				  <input type="text" class="form-control w-100" id="inputUrl0" maxlength="255" placeholder="">
+				</div>
+            </div>
+          </div>
+          <!-- /URL -->
+          <!-- Manual -->
+          <div>
+            <div class="row">
+              <div class="col-lg-12">
+                <table class="col-lg-12">
+                	<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+					<tr>
+						<td align="left" class="h6 col-form-label-sm"><label for="inputManualName">マニュアル</label></td>
+						<td align="right" class="h5 text-muted text-right mr-1 mb-0">
+							<a id="addManual">
+								<i class="fa fa-plus-circle" aria-hidden="true"></i>
+							</a>
+						</td>
+					<tr>
+				</table>
+			  </div>
+            </div>
+			 <div id = "manualList">
+	            <div class="row">
+	              <div class="col-lg-8">
+	                <label for="inputManualName ">タイトル</label>
+	                <input type="text" class="form-control w-100" id="inputManualName0" maxlength="100" placeholder="">
+	              </div>
+	              <div class="col-lg-4">
+	                <label for="inputManualPage ">ページ</label>
+	                <input type="text" class="form-control w-100" id="inputManualPage0" maxlength="10" placeholder="">
+	              </div>
+	              <div class="col-lg-12">
+	                <label for="inputManualUrl ">参照URL</label>
+	                <input type="text" class="form-control w-100" id="inputManualUrl0" maxlength="255" placeholder="">
+	              </div>
+	            </div>
+	         </div>
+          </div>
+          <!-- /Manual -->
+          <!-- Script -->
+          <div class="form-group-modal w-100">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group-modal">
+		  <label for="inputScript">スクリプト</label>
+                  <textarea rows="5" id="inputScript" class="form-control noresize w-100" placeholder=""></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Script -->
+          <!-- Tag -->
+          <div class="form-group-modal">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="badge-small badge-danger text-white">必須</span>
+                <label for="exampleInputEmail1">タグ</label>
+                <div class="card-block px-0">
+                  <div class="badge-list my-0">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- button-search -->
+            <div class="col-lg-6 no-padding">
+              <div class="input-group">
+                <form class="form "><!-- append -->
+                  <input type="text" class="form-control ccs-with-button" id="inputNewTagName" maxlength="100"
+                   placeholder="タグを追加" aria-label="Tag">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-primary mb-0" type="button" id="addTag">追加</button>
+                </span>
+                </form><!-- append -->
+              </div>
+            </div>
+            <!-- /button-search -->
+          </div>
+          <!-- /Tag -->
+          <div class="align-bottom align-baseline my-4">
+            <button type="button" id="update" class="btn btn-primary btn-lg btn-block no-margin align-bottom align-baseline">更新</button>
+          </div>
+        </div>
+      </div>
+  </form>
+
+  </div> <!-- /editParent /card-block -->
+                  </div> <!-- /card-body -->
+                  </div>
+                  <!-- /answer -->
+            <!-- /container -->
+
+          </main>
+          <!-- /main -->
+        </div>
+        <!-- /app-body -->
+
+        <!-- footer-->
+        <footer class="app-footer">
+    <!-- <span class="float-right">© 2017 Optim</span> -->
+</footer>
+
+          <!-- /footer -->
+          <!-- script -->
+          <!-- Bootstrap and necessary plugins -->
+<script src="../js/libs/jquery.min.js"></script>
+<script src="../js/libs/tether.min.js"></script>
+<script src="../js/libs/bootstrap.min.js"></script>
+<script src="../js/libs/pace.min.js"></script>
+
+<!-- GenesisUI main scripts -->
+<script src="../js/main.js"></script>
+
+<!-- CallCenterSolution Application -->
+
+<script src="../app/common/ccs.js"></script>
+<script src="../app/common/util.js"></script>
+<script src="../app/common/prop.js"></script>
+
+<script src="../app/common/view.js"></script>
+<script src="../app/common/api.js"></script>
+<script src="../app/common/auth.js"></script>
+<script src="../app/common/user.js"></script>
+
+<script src="../app/layout.js"></script>
+<script src="../app/admin.js"></script>
+
+            <!-- /script -->
+
+  </body>
+
+</html>

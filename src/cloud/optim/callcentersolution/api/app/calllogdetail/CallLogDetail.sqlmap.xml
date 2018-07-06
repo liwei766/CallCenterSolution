@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All Rights Reserved
+ * システム名：
+ * ファイル名：CallLogDetail.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.calllogdetail.CallLogDetailMapper">
+
+	<!--
+		CallLogDetail エンティティのカラムマッピング
+	-->
+	<resultMap id="entityMap" type="cloud.optim.callcentersolution.api.entity.CallLogDetail" >
+		<id property="callLogDetailId" column="CALL_LOG_DETAIL_ID" />
+		<result property="updateDate" column="UPDATE_DATE" />
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="callLogId" column="CALL_LOG_ID" />
+		<result property="log" column="LOG" />
+		<result property="begin" column="BEGIN" />
+		<result property="end" column="END" />
+		<result property="voiceExistence" column="VOICE_EXISTENCE" />
+		<result property="border" column="BORDER" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="createUserId" column="CREATE_USER_ID" />
+		<result property="createUserName" column="CREATE_USER_NAME" />
+		<result property="updateUserId" column="UPDATE_USER_ID" />
+		<result property="updateUserName" column="UPDATE_USER_NAME" />
+		<result property="deleteDate" column="DELETE_DATE" />
+	</resultMap>
+
+	<!-- 通話ログIDによる検索なデータの検索 -->
+	<select id="getDetails" resultMap="entityMap">
+		SELECT
+			*
+		FROM
+			TBL_T_CALL_LOG_DETAIL callLogDetail
+		WHERE
+			COMPANY_ID = #{companyId} AND
+			CALL_LOG_ID = #{callLogId} AND
+			DELETE_DATE IS NULL
+	</select>
+
+	<!-- 音声無しデータの検索 -->
+	<select id="searchNoVoice" resultMap="entityMap">
+		SELECT
+			*
+		FROM
+			TBL_T_CALL_LOG_DETAIL callLogDetail
+		WHERE
+			COMPANY_ID = #{companyId} AND
+			CALL_LOG_ID = #{callLogId} AND
+			BEGIN IS NOT NULL AND
+			END IS NOT NULL AND
+			VOICE_EXISTENCE = FALSE
+	</select>
+
+	<!-- 音声ありのデータの検索 -->
+	<select id="searchExistVoice" resultMap="entityMap">
+		SELECT
+			*
+		FROM
+			TBL_T_CALL_LOG_DETAIL callLogDetail
+		WHERE
+			COMPANY_ID = #{companyId} AND
+			CALL_LOG_ID = #{callLogId} AND
+			VOICE_EXISTENCE = TRUE AND
+			DELETE_DATE IS NULL
+		ORDER BY
+			CALL_LOG_DETAIL_ID ASC
+	</select>
+
+	<!-- 音声ありのデータの検索(論理削除も含む) -->
+	<select id="searchAllExistVoice" resultMap="entityMap">
+		SELECT
+			*
+		FROM
+			TBL_T_CALL_LOG_DETAIL callLogDetail
+		WHERE
+			COMPANY_ID = #{companyId} AND
+			CALL_LOG_ID = #{callLogId} AND
+			VOICE_EXISTENCE = TRUE
+		ORDER BY
+			CALL_LOG_DETAIL_ID ASC
+	</select>
+
+	<!-- 音声有無フラグを無しに更新 -->
+	<update id="updateVoiceExistence">
+		UPDATE
+			TBL_T_CALL_LOG_DETAIL
+		SET
+			BEGIN = NULL,
+			END = NULL,
+			VOICE_EXISTENCE = FALSE
+		WHERE
+		    CALL_LOG_DETAIL_ID = #{callLogDetailId}
+	</update>
+
+
+	<!-- 通話ログIDに紐づく詳細ログを一括論理削除 -->
+	<update id="logicalDeleteAllCallLogDetails">
+		UPDATE
+			TBL_T_CALL_LOG_DETAIL
+		SET
+			UPDATE_DATE = #{deleteDate},
+			DELETE_DATE = #{deleteDate},
+			UPDATE_USER_ID = #{updateUserId},
+			UPDATE_USER_NAME = #{updateUserName}
+		WHERE
+			CALL_LOG_ID = #{callLogId}
+			AND COMPANY_ID = #{companyId}
+			AND DELETE_DATE IS NULL
+	</update>
+
+
+	<!--
+		通話ログIDに紐づく詳細ログを一括削除
+	-->
+	<delete id="deleteAllCallLogDetails">
+		DELETE
+		FROM
+			TBL_T_CALL_LOG_DETAIL
+		WHERE
+			CALL_LOG_ID = #{callLogId}
+	</delete>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

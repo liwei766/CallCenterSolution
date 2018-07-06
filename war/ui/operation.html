@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- head -->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Analyze Manager">
+	<meta name="author" content="Optim">
+	<link rel="shortcut icon" href="img/favicon.png">
+	<title>Call Center App</title>
+
+	<!-- Main styles for this application -->
+	<link href="css/style.css" rel="stylesheet">
+	<link href="app/ccs.css" rel="stylesheet">
+
+</head>
+
+  <!-- /head -->
+
+  <body class="app pace-done sidebar-minimized invisible">
+
+    <!-- modal-panel -->
+    <div id="dialog" class="modal align-middle fade bd-example-modal-lg"
+     tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    </div>
+    <!-- /modal-panel -->
+
+    <!-- エスカレーション確認ダイアログ -->
+    <div id="escalationDialog" class="modal align-middle fade bd-example-modal-lg"
+     tabindex="-1" role="opdialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">エスカレーション</h5>
+          </div>
+          <div class="modal-body">
+            <p>問合せ番号を入力してください。</p>
+          </div>
+          <div class="modal-body">
+          <span><input id="inputCallLogNo" type="text" size="40" maxlength="20" /></span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn1-button btn btn-primary" aria-label="Close">OK</button>
+            <button type="button" class="btn2-button btn btn-primary" aria-label="Close">キャンセル</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /エスカレーション確認ダイアログ -->
+
+
+    <!-- 一時停止ダイアログ -->
+    <div id="pauseCallDialog" class="modal align-middle fade bd-example-modal-lg"
+     tabindex="-1" role="opdialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">通話一時停止</h5>
+          </div>
+          <div class="modal-body">
+            <p class="text-error">通話は一時停止中です。</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn1-button btn btn-primary" aria-label="Close">再開</button>
+            <button type="button" class="btn2-button btn btn-primary" aria-label="Close">終了</button>
+            <button type="button" class="btn3-button btn btn-primary" aria-label="Close">エスカレーション</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /一時停止ダイアログ -->
+
+      <!-- header -->
+      <header id="navBar" class="app-header navbar d-flex justify-content-end ccs-navbar"></header>
+      <!-- /header -->
+
+        <!-- app-body -->
+        <div class="app-body">
+
+          <!-- left-side -->
+          <div id="sidebar" class="sidebar"></div>
+          <!-- /left-side -->
+
+          <!-- Main -->
+          <main class="main">
+
+            <!-- Container -->
+            <div class="container-fluid animated fadeIn h-100">
+              <div class="d-flex h-100">
+                <!-- chat -->
+                <div class="col-lg-4 no-padding h-100">
+                  <div class="operation h-100">
+
+  <div class="card border-left-0 h-100">
+
+    <!-- Card header -->
+    <div class="card-header d-flex justify-content-start h1-header">
+      <div class="h4 text-muted text-right mr-1 mb-0">
+        <i class="fa fa-headphones" aria-hidden="true"></i>
+      </div>
+      <div class="mr-auto p-2">オペレーション</div>
+      <div class=" ml-auto"><span id="callLogNo"></span></div>
+      <button id="pauseCall" class="btn btn-primary mx-3 invisible">通話一時停止</button>
+      <button id="answerCandidate" class="btn btn-primary mb-0">回答候補を表示</button>
+    </div>
+    <!-- /Card header -->
+
+    <!-- Card block -->
+    <div class="card-block h-100">
+      <textarea id="callContents" class="form-control form-control_edit noresize py-4 ccs-op-call"></textarea>
+    </div>
+    <!-- /Card block -->
+
+    <!-- Card footer -->
+    <div class="card-footer d-flex align-items-center ccs-op-footer">
+      <!-- <span class="badge badge-default mr-auto">通話中</span> -->
+
+      <div id="callStat" class="p-0 d-flex justify-content-center">
+        <div id="calling" hidden="" class="badge badge-default text-error font-weight-bold mb-0">通話中</div>
+        <div id="starting" hidden="" class="badge badge-default text-error font-weight-bold mb-0">準備中</div>
+        <div id="ending"   hidden="" class="badge badge-default text-error font-weight-bold mb-0">終了中</div>
+
+      </div>
+
+      <span id="countClock" class="h4 time-stamp mr-auto">00:00:00</span>
+
+      <button class="btn btn-primary mr-auto mx-0" id="changeEscalation">エスカレーション</button>
+      <button class="btn btn-primary mr-auto mx-0" id="cancelEscalation" hidden="hidden">エスカレーション解除</button>
+
+      <button class="btn btn-primary badge-pill" id="startCall">通話開始</button>
+      <button class="btn btn-primary badge-pill" id="startHandOver" hidden="hidden">引継開始</button>
+      <button class="btn btn-danger badge-pill" id="endCall" hidden="hidden">通話終了</button>
+
+    </div>
+    <!-- /Card footer -->
+
+  </div>
+
+</div>
+
+                </div>
+                <!-- /chat -->
+
+                <!-- Answer -->
+                <div class="col-lg-8 ccs-op-right-pane">
+
+                  <!-- Panel Tag -->
+                  <div class="row">
+                    <div class="col-lg-12 no-padding">
+<div class="tag h-100">
+
+  <div class="card border-left-0 border-right-0">
+
+    <!-- Card header -->
+    <div class="card-header d-flex justify-content-start align-items-center h2-header">
+      <div class="text-title">
+        <span>回答候補</span>
+      </div>
+
+      <div class="col-lg-4 ml-auto no-padding">
+	      <div class="input-group d-flex align-items-center">
+	         <div class="text-title">
+				<label>手動</label>
+				<label class="switch switch-3d switch-primary">
+					<input id="tagAddMode" type="checkbox" class="switch-input" checked>
+					<span class="switch-label"></span>
+					<span class="switch-handle"></span>
+				</label>
+				<label>自動</label>&nbsp;&nbsp;
+	        </div>
+          <input type="text" id="inputNewTagName" class="form-control ccs-with-button"
+           placeholder="タグを追加" aria-label="Tag" maxlength="100">
+          &nbsp;&nbsp;
+          <span class="input-group-btn">
+          <button id="addTag" class="btn btn-primary mb-0" type="button">追加</button>
+        </span>
+        </div>
+      </div>
+    </div>
+    <!-- /Card header -->
+
+    <!-- Card block -->
+    <div class="card-block h-100 ccs-op-low-pane">
+
+      <!-- tags -->
+      <div class="row">
+        <div class="col-lg-12" id="tagListArea">
+        </div>
+      </div>
+      <!-- /tags -->
+
+    </div>
+    <!-- Card block -->
+
+  </div> <!-- /card -->
+
+</div> <!-- /tag -->
+
+                    </div>
+                  </div>
+                  <!-- /Panel Tag -->
+
+                  <!-- Panel Answer -->
+                  <div class="row ccs-op-low-pane">
+                    <div class="no-padding h-100">
+<div class="answer-list h-100">
+  <div class="card h-100 border-top-0 border-left-0 ccs-op-list">
+    <!-- Wrapper -->
+    <div id="knowledgeTitleArea" class="inner-wrap border-top-0 border-bottom-0 main-table">
+    </div>
+    <!-- /Wrapper -->
+  </div>
+
+</div>
+
+                    </div>
+                    <div class="no-padding ccs-op-answer-area">
+                      <div class="answer-item h-100">
+  <div class="card h-100 ccs-op-answer border-top-0 border-left-0 border-right-0">
+
+    <!-- contents -->
+
+    <div class="card-block">
+      <div class="card-body d-flex align-items-baseline">
+        <p id="qaNo" class="text-title p-2 mb-0"></p>
+        <p id="qaUpdateDate" class="text-title ml-auto"></p>
+      </div>
+    </div>
+
+    <div class="card-block card-block-op">
+      <div class="card-body">
+        <h4 class="text-title">
+        <button class="btn btn-secondary">タイトル</button>
+      </h4>
+        <p id="qaTitle" class="text-body"></p>
+      </div>
+    </div>
+
+    <div class="card-block card-block-op">
+      <div class="card-body">
+        <h4 class="text-title">
+              <p><button class="btn btn-secondary">回答</button></p>
+            </h4>
+        <p id="qaContents" class="text-body"></p>
+      </div>
+    </div>
+
+    <div class="card-block card-block-op">
+      <div class="card-body">
+        <h4 class="text-title">
+          <button class="btn btn-secondary">参照URL</button>
+        </h4>
+        <div id="qaUrl" class="text-body"></div>
+      </div>
+    </div>
+
+    <div class="card-block card-block-op">
+      <div class="card-body">
+        <h4 class="text-title">
+          <button class="btn btn-secondary">マニュアル</button>
+        </h4>
+        <div id="manualContents" class="text-body"></div>
+      </div>
+    </div>
+
+    <div class="card-block card-block-op">
+      <div class="card-body">
+        <h4 class="text-title">
+          <button class="btn btn-secondary">スクリプト</button>
+        </h4>
+        <p id="scriptdataContents" class="text-body"></p>
+      </div>
+    </div>
+
+  <!-- /contents -->
+  </div>
+</div>
+
+                    </div>
+                  </div>
+                  <!-- /Panel Answer -->
+
+                </div>
+                <!-- /Answer -->
+
+              </div>
+            </div>
+            <!-- /Container -->
+
+          </main>
+          <!-- /Main -->
+        </div>
+        <!-- /app-body -->
+        <!-- script -->
+        <!-- Bootstrap and necessary plugins -->
+<script src="js/libs/jquery.min.js"></script>
+<script src="js/libs/tether.min.js"></script>
+<script src="js/libs/bootstrap.min.js"></script>
+<script src="js/libs/pace.min.js"></script>
+
+<!-- GenesisUI main scripts -->
+<script src="js/main.js"></script>
+
+<!-- CallCenterSolution Application -->
+<script src="app/lib/optim/wav.js"></script>
+<script src="app/lib/optim/mic.js"></script>
+<script src="app/lib/optim/analyze_result_manager.js"></script>
+
+<script src="app/common/ccs.js"></script>
+<script src="app/common/util.js"></script>
+<script src="app/common/prop.js"></script>
+
+<script src="app/common/view.js"></script>
+<script src="app/common/api.js"></script>
+<script src="app/common/auth.js"></script>
+<script src="app/common/user.js"></script>
+
+<script src="app/layout.js"></script>
+<script src="app/operation.js"></script>
+
+          <!-- /script -->
+
+  </body>
+
+</html>

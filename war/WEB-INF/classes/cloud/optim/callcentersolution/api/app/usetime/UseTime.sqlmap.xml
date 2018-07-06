@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+ * Copyright (C) 2017 OPTiM Corp. All rights reserved.
+ * システム名：
+ * ファイル名：usetime.sqlmap.xml
+ * 概要：
+ *
+ * 修正履歴：
+ *   編集者		日付					概要
+ *
+-->
+<mapper namespace="cloud.optim.callcentersolution.api.app.usetime.UseTimeMapper">
+
+	<!--
+		SearchResult のカラムマッピング
+	-->
+	<resultMap id="searchResultMap" type="cloud.optim.callcentersolution.api.app.usetime.SearchResult" >
+		<result property="companyId" column="COMPANY_ID" />
+		<result property="yearMonth" column="YYYY_MM" />
+		<result property="useTime" column="USE_TIME" />
+		<result property="useCount" column="USE_COUNT" />
+	</resultMap>
+
+	<select id="searchByMonth" resultMap="searchResultMap">
+		SELECT
+		    UT_1.COMPANY_ID
+		  , IFNULL(UT_1.USE_TIME,0) USE_TIME
+		  , IFNULL(UT_2.USE_COUNT,0) USE_COUNT
+		FROM
+		  (
+		    SELECT
+		      UT.COMPANY_ID
+		      , SUM(UT.USE_TIME) USE_TIME
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+			<where>
+			    <![CDATA[
+				ut.START_DATE >= #{useTime.startDate}
+				AND ut.START_DATE < #{useTime.endDate}
+				]]>
+			    AND UT.TYPE = '1'
+			</where>
+		    GROUP BY
+		      UT.COMPANY_ID
+		  ) UT_1
+		  LEFT OUTER JOIN (
+		    SELECT
+		      UT.COMPANY_ID
+		      , COUNT(UT.USE_TIME) USE_COUNT
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+			    <![CDATA[
+				ut.START_DATE >= #{useTime.startDate}
+				AND ut.START_DATE < #{useTime.endDate}
+				]]>
+				AND UT.TYPE = '2'
+			</where>
+		    GROUP BY
+		      UT.COMPANY_ID
+		  ) UT_2
+		    ON UT_1.COMPANY_ID = UT_2.COMPANY_ID
+		UNION
+		SELECT
+		  UT_2.COMPANY_ID
+		  , IFNULL(UT_1.USE_TIME,0) USE_TIME
+		  , IFNULL(UT_2.USE_COUNT,0) USE_COUNT
+		FROM
+		  (
+		    SELECT
+		      UT.COMPANY_ID
+		      , SUM(UT.USE_TIME) USE_TIME
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+			    <![CDATA[
+				ut.START_DATE >= #{useTime.startDate}
+				AND ut.START_DATE < #{useTime.endDate}
+				]]>
+		      AND UT.TYPE = '1'
+			</where>
+		    GROUP BY
+		      UT.COMPANY_ID
+		  ) UT_1
+		  RIGHT OUTER JOIN (
+		    SELECT
+		      UT.COMPANY_ID
+		      , COUNT(UT.USE_TIME) USE_COUNT
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+			    <![CDATA[
+				ut.START_DATE >= #{useTime.startDate}
+				AND ut.START_DATE < #{useTime.endDate}
+				]]>
+		      AND UT.TYPE = '2'
+			</where>
+		    GROUP BY
+		      UT.COMPANY_ID
+		  ) UT_2
+		    ON UT_1.COMPANY_ID = UT_2.COMPANY_ID
+		ORDER BY
+		<choose>
+			<when test="sortForm != null and sortForm.sortElement != null">
+				<foreach item="item" index="x" collection="sortForm.sortElement"
+					separator=",">
+					${item.name}
+					<if test="item.asc == true">
+						ASC
+					</if>
+					<if test="item.asc != true">
+						DESC
+					</if>
+				</foreach>
+			</when>
+			<otherwise>
+				USE_TIME DESC
+			</otherwise>
+		</choose>
+	</select>
+
+
+	<select id="searchByCompanyId_old" resultMap="searchResultMap">
+		SELECT
+			DATE_FORMAT(START_DATE, '%Y-%m') AS YYYY_MM,
+	    	SUM(USE_TIME) AS USE_TIME
+		FROM
+			tbl_t_use_time
+		<where>
+		    company_id=#{useTime.companyId}
+		</where>
+		GROUP BY
+			YYYY_MM
+		ORDER BY
+		<choose>
+			<when test="sortForm != null and sortForm.sortElement != null">
+				<foreach item="item" index="x" collection="sortForm.sortElement"
+					separator=",">
+					${item.name}
+					<if test="item.asc == true">
+						ASC
+					</if>
+					<if test="item.asc != true">
+						DESC
+					</if>
+				</foreach>
+			</when>
+			<otherwise>
+				YYYY_MM DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="searchByCompanyId" resultMap="searchResultMap">
+		SELECT
+		  UT_1.YYYY_MM
+		  , IFNULL(UT_1.USE_TIME, 0) USE_TIME
+		  , IFNULL(UT_2.USE_COUNT, 0) USE_COUNT
+		FROM
+		  (
+		    SELECT
+		      DATE_FORMAT(START_DATE, '%Y-%m') AS YYYY_MM
+		      , SUM(USE_TIME) AS USE_TIME
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+		      UT.COMPANY_ID = #{useTime.companyId}
+		      AND UT.TYPE = '1'
+		    </where>
+		    GROUP BY
+		      YYYY_MM
+		  ) UT_1
+		  LEFT OUTER JOIN (
+		    SELECT
+		      DATE_FORMAT(START_DATE, '%Y-%m') AS YYYY_MM
+		      , COUNT(USE_TIME) USE_COUNT
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+		      UT.COMPANY_ID = #{useTime.companyId}
+		      AND UT.TYPE = '2'
+		    </where>
+		    GROUP BY
+		      YYYY_MM
+		  ) UT_2
+		    ON UT_1.YYYY_MM = UT_2.YYYY_MM
+		UNION
+		SELECT
+		  UT_2.YYYY_MM
+		  , IFNULL(UT_1.USE_TIME, 0) USE_TIME
+		  , IFNULL(UT_2.USE_COUNT, 0) USE_COUNT
+		FROM
+		  (
+		    SELECT
+		      DATE_FORMAT(START_DATE, '%Y-%m') AS YYYY_MM
+		      , SUM(USE_TIME) AS USE_TIME
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+		      UT.COMPANY_ID = #{useTime.companyId}
+		      AND UT.TYPE = '1'
+		    </where>
+		    GROUP BY
+		      YYYY_MM
+		  ) UT_1
+		  RIGHT OUTER JOIN (
+		    SELECT
+		      DATE_FORMAT(START_DATE, '%Y-%m') AS YYYY_MM
+		      , COUNT(USE_TIME) USE_COUNT
+		    FROM
+		      TBL_T_USE_TIME UT INNER JOIN TBL_T_COMPANY_MANAGEMENT CM
+		      	ON CM.COMPANY_ID = UT.COMPANY_ID AND CM.AGENCY_COMPANY_ID = #{useTime.agencyCompanyId}
+		    <where>
+		      UT.COMPANY_ID = #{useTime.companyId}
+		      AND UT.TYPE = '2'
+		    </where>
+		    GROUP BY
+		      YYYY_MM
+		  ) UT_2
+		    ON UT_1.YYYY_MM = UT_2.YYYY_MM
+
+		ORDER BY
+		<choose>
+			<when test="sortForm != null and sortForm.sortElement != null">
+				<foreach item="item" index="x" collection="sortForm.sortElement"
+					separator=",">
+					${item.name}
+					<if test="item.asc == true">
+						ASC
+					</if>
+					<if test="item.asc != true">
+						DESC
+					</if>
+				</foreach>
+			</when>
+			<otherwise>
+				YYYY_MM DESC
+			</otherwise>
+		</choose>
+	</select>
+
+<!-- 	<select id="getUsetimeGroupByCompanyID" resultMap="searchResultMap"> -->
+<!-- 		SELECT -->
+<!-- 			ut.COMPANY_ID,sum(ut.USE_TIME) USE_TIME -->
+<!-- 		FROM -->
+<!-- 			tbl_t_use_time ut -->
+<!-- 		<where> -->
+<!-- 		    <![CDATA[ -->
+<!-- 			ut.START_DATE >= #{startDate} -->
+<!-- 			AND ut.START_DATE < #{endDate} -->
+<!-- 			]]> -->
+<!-- 		</where> -->
+<!-- 		GROUP BY -->
+<!-- 			ut.COMPANY_ID -->
+<!-- 		ORDER BY -->
+<!-- 			USE_TIME DESC -->
+<!-- 	</select> -->
+
+</mapper>
