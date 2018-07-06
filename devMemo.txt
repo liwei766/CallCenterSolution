@@ -1,0 +1,52 @@
+
+【ファイル構成】
+
+・common/ccs.js		アプリの初期処理と定数定義（CCS.data）
+・common/util.js	共通処理コレクション（CCS.util）
+・common/prop.js	プロパティ取得処理（CCS.prop）
+・common/view.js	画面表示系の共通処理（CCS.view）
+・common/api.js		API 送信の共通処理（CCS.api）
+・common/auth.js	権限関連処理（CCS.auth）
+・common/user.js	認証情報処理（CCS.user）
+
+【画面追加】
+
+	・～.html ファイル作成（～.js をロード）
+	・～.js ファイル作成
+	・ccs.js 修正
+		CCS.data.redirectMap に、追加画面の URL と権限情報を追加する
+		html ファイル名（～）とプロパティ名は一致させる必要がある
+
+【JSHint の設定】
+
+	・［設定］またはプロジェクトのプロパティから
+	　JSHint－構成を選択して、「Global JSHint configuration」に以下の内容を設定
+{
+"laxcomma" : true,
+"validthis" : true,
+"jquery" : true,
+"globalstrict" : true,
+
+"predef": [
+  "window",
+  "document",
+  "jquery",
+  "$",
+  "CCS",
+
+  "setInterval","clearInterval",
+  "setTimeout"
+]
+
+}
+
+
+pre mysql DMM
+insert into callcentersolution.tbl_t_company_management(`UPDATE_DATE`,`COMPANY_ID`,`COMPANY_NAME`,`AGENCY_COMPANY_ID`,`RECAIUS_LICENSE_ID`,`RECAIUS_MODEL_ID`,`ENERGY_THRESHOLD`,`HASHED_COMPANY_ID`,`SAVE_VOICE`,`PERMIT_IP_ADDRESS`,`VOICE_KEEP_DAYS`,`LOGICAL_DELETE_LOG_KEEP_DAYS`,`CREATE_DATE`,`CREATE_USER_ID`,`CREATE_USER_NAME`,`UPDATE_USER_ID`,`UPDATE_USER_NAME`) values ('2018-07-06T17:27:10','optim20172017','optim','optim20172017',1,2824,500,'c6790741e136600a2b87489ad893a39617cdc22ca005812959d9652181a46be2',1,'',null,null,'2018-03-09T14:09:00','mitsuko.kumakura','熊倉 みつ子','admin','admin');
+
+insert into callcentersolution.tbl_t_recaius_license(`UPDATE_DATE`,`SERVICE_ID`,`PASSWORD`,`AGENCY_COMPANY_ID`,`CREATE_DATE`,`CREATE_USER_ID`,`CREATE_USER_NAME`,`UPDATE_USER_ID`,`UPDATE_USER_NAME`) values ('2018-02-08T13:32:29','fe55e2ed1eb9c6199d326f62f8f7b8fe06bb2814d51fbae0dae5548e87d0e938037fbd72e01f95f6ad9aec017972997329ad9f05b8724e29','47bda6d557798bc3593434fd0754e70cd26738bd365cd485f32c99a7993ea63be2c6a3b7c8057fc3','optim-callcenter01','2017-12-04T14:07:05','admin','admin','admin','admin');
+
+
+insert into callcentersolution.tbl_t_agency(`UPDATE_DATE`,`AGENCY_COMPANY_ID`,`CREATE_DATE`,`CREATE_USER_ID`,`CREATE_USER_NAME`,`UPDATE_USER_ID`,`UPDATE_USER_NAME`) values ('2017-11-28T18:44:14','optim-solution-sp','2017-11-28T18:44:14','admin','admin','admin','admin');
+insert into callcentersolution.tbl_t_agency(`UPDATE_DATE`,`AGENCY_COMPANY_ID`,`CREATE_DATE`,`CREATE_USER_ID`,`CREATE_USER_NAME`,`UPDATE_USER_ID`,`UPDATE_USER_NAME`) values ('2018-02-08T12:52:07','optim-callcenter01','2018-02-08T12:52:07','admin','admin','admin','admin');
+
